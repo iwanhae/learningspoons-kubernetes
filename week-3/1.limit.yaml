@@ -62,7 +62,7 @@ kind: Deployment
 metadata:
   name: blue-app
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: blue-app
