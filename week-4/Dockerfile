@@ -1,2 +1,2 @@
 FROM codercom/code-server
-RUN apt update && apt install -y iproute2 tcpdump dnsutils
+RUN sudo apt update && sudo apt install -y iproute2 tcpdump dnsutils
