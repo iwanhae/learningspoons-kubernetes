@@ -44,30 +44,14 @@ spec:
         app: green-app
         from: loadtester
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: from
-                    operator: In
-                    values:
-                      - loadtester
-              topologyKey: kubernetes.io/hostname
       containers:
         - name: green-app
           image: ghcr.io/iwanhae/simple-loadtester:latest
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
           imagePullPolicy: Always
-          lifecycle:
-            preStop:
-              exec:
-                command:
-                  - "sleep"
-                  - "5"
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8080
           args:
             - "-color=green"
           ports:
@@ -88,19 +72,13 @@ spec:
         app: blue-app
         from: loadtester
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: from
-                    operator: In
-                    values:
-                      - loadtester
-              topologyKey: kubernetes.io/hostname
       containers:
         - name: blue-app
           image: ghcr.io/iwanhae/simple-loadtester:latest
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
           args:
             - "-color=aqua"
           ports:

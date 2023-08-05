@@ -34,7 +34,7 @@ kind: Deployment
 metadata:
   name: green-app
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: green-app
@@ -71,6 +71,11 @@ spec:
       containers:
         - name: blue-app
           image: ghcr.io/iwanhae/simple-loadtester:latest
+          resources:
+            limits:
+              memory: "128Mi"
+            requests:
+              cpu: "500m"
           args:
             - "-color=aqua"
           ports:
