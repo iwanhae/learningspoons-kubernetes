@@ -1,0 +1,18 @@
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://kubegang.today
+  name: kubegang
+contexts:
+- context:
+    cluster: kubegang
+    user: kubegang
+    namespace: default
+  name: kubegang
+current-context: kubegang
+kind: Config
+preferences: {}
+users:
+- name: kubegang
+  user:
+    token: helloworldpassword
