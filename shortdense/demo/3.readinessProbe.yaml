@@ -1,0 +1,91 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: loadtester
+  labels:
+    name: loadtester
+spec:
+  ingressClassName: traefik
+  rules:
+    - http:
+        paths:
+          - backend:
+              service:
+                name: loadtester
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadtester
+spec:
+  selector:
+    from: loadtester
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: green-app
+  template:
+    metadata:
+      labels:
+        app: green-app
+        from: loadtester
+    spec:
+      containers:
+        - name: green-app
+          image: ghcr.io/iwanhae/simple-loadtester:latest
+          imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - "sleep"
+                  - "30"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+          args:
+            - "-color=green"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blue-app
+  template:
+    metadata:
+      labels:
+        app: blue-app
+        from: loadtester
+    spec:
+      containers:
+        - name: blue-app
+          image: ghcr.io/iwanhae/simple-loadtester:latest
+          args:
+            - "-color=aqua"
+          ports:
+            - containerPort: 8080
